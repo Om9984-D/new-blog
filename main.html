@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Bar</title>
+</head>
+<body>
+    <h1>Google Search Bar</h1>
+    <form id="searchForm" onsubmit="fetchfromGoogle();">
+        <input type="text" id="searchQuery" placeholder="Search Google..." required>
+        <button type="submit">Search</button>
+    </form>
+    <div id="results"></div>
+
+    <script>
+        async function fetchResults() {
+            const query = document.getElementById('searchQuery').value;
+            const resultsDiv = document.getElementById('results');
+    
+            // Clear previous results
+            resultsDiv.innerHTML = '';
+    
+            // Fetch results from Google Search API (replace 'YOUR_API_KEY' and 'YOUR_CX' with actual values)
+            const apiKey = 'YOUR_API_KEY';
+            const cx = 'YOUR_CX';
+            const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(query)}`;
+    
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+    
+                // Display results
+                if (data.items) {
+                    data.items.forEach(item => {
+                        const resultDiv = document.createElement('div');
+                        resultDiv.className = 'result';
+                        resultDiv.innerHTML = `<a href="${item.link}" target="_blank">${item.title}</a><p>${item.snippet}</p>`;
+                        resultsDiv.appendChild(resultDiv);
+                    });
+                } else {
+                    resultsDiv.innerHTML = '<p>No results found.</p>';
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = '<p>Error fetching results. Please try again later.</p>';
+            }
+    
+            return false; // Prevent form submission
+        }
+    </script>
+    <script>
+        function redirectToGoogle() {
+            const query = document.getElementById('searchQuery').value;
+            const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+            window.location.href = googleSearchUrl;
+            return false; // Prevent form submission
+        }
+    </script>
+</body>
+</html>
+
